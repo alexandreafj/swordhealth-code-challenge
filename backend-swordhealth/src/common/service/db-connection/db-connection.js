@@ -1,24 +1,24 @@
-const getConnection = async ({ db }) => {
-  const knex = require("knex")({
-    client: "mysql",
+const getConnection = async () => {
+  const connection = require("knex")({
+    client: "mysql2",
     connection: {
       host: process.env.MYSQL_HOST,
       user: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASS,
-      database: db,
+      database: process.env.MYSQL_DATABASE,
     },
   });
-  return knex;
+  return { connection };
 };
 
-const getTransaction = async ({ db }) => {
+const getTransaction = async () => {
   const knex = require("knex")({
-    client: "mysql",
+    client: "mysql2",
     connection: {
       host: process.env.MYSQL_HOST,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASS,
-      database: db,
+      user: "root",
+      password: "root",
+      database: process.env.MYSQL_DATABASE,
     },
   });
 

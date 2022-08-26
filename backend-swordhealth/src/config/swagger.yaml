@@ -41,6 +41,35 @@ definitions:
     properties: 
       token:
         type: "string"
+  Validation:
+    type: "object"  
+    properties: 
+      message:
+        type: "string"
+      path:
+        type: "array"
+        items:
+          type: "string"
+      type:
+        type: "string"
+      context:
+        type: "object"
+        properties:
+          limit:
+            type: "number"
+          value: 
+            type: "string"
+          label:
+            type: "string"
+          key:
+            type: "string"
+  BadRequest:
+    type: "object"
+    properties:
+      details:
+        type: "array"
+        items:
+          $ref: "#/definitions/Validation"
 paths:
   /health:
     get:
@@ -72,9 +101,11 @@ paths:
           $ref: "#/definitions/User"
       responses:
         200:
-          description: user has been created!
+          description: user has been created
         400:
           description: BadRequest
+          schema:
+            $ref: "#/definitions/BadRequest"
         401:
           description: Unauthorized
         500:

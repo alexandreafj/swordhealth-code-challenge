@@ -23,6 +23,7 @@
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^2.2.0",
+    "mysql2": "^2.3.3",
     "redis": "^4.3.0",
     "supertest": "^6.2.4",
     "swagger-express-mw": "^0.7.0",
