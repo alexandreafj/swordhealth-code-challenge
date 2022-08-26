@@ -1,6 +1,9 @@
 const Joi = require("joi");
 const repository = require("../../repository");
 const userRepository = require("../../repository");
+const {
+  service: { bcrypt },
+} = require("../../../../common");
 
 const validateCreateUserSchema = ({
   body = { email: "", name: "", password: "" },
@@ -29,6 +32,7 @@ const createUserService = async ({ body }) => {
   if (hasFoundAnyUser) {
     throw { message: "Email already exists.", statusCode: 409 };
   }
+  body.password = bcrypt.generateHashPassword({ password: body.password });
   await userRepository.insertUser({ user: body });
 };
 

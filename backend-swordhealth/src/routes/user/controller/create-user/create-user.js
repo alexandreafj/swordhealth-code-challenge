@@ -1,5 +1,6 @@
 const {
   handler: { httpErrorHandler },
+  service: { bcrypt },
 } = require("../../../../common");
 const httpStatusCodes = require("http-status-codes");
 
