@@ -1,0 +1,55 @@
+version: '3.5'
+
+services:
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    ports: 
+      - 6379:6379
+  mysql:
+   image: mysql
+   restart: always
+   container_name: db-mysql
+   ports:
+    - 3306:3306
+   environment:
+     MYSQL_ROOT_PASSWORD: root
+   volumes:
+    - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  backend-swordhealth-proxy:
+    build:
+      context: ./backend-swordhealth
+      dockerfile: Dockerfile-proxy.dev
+    container_name: backend-swordhealth-proxy
+    ports:
+      - 8080:8080
+    depends_on:
+      - backend-swordhealth
+    links:
+      - backend-swordhealth
+  backend-swordhealth:
+    build:
+      context: ./backend-swordhealth
+      dockerfile: Dockerfile.dev
+    container_name: backend-swordhealth
+    working_dir: /backend-swordhealth
+    volumes:
+      - backend-swordhealth-node-modules:/backend-swordhealth/node_modules
+      - ./backend-swordhealth:/backend-swordhealth
+    depends_on: 
+      - redis
+      - mysql
+    environment:
+      PORT: 8089
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASS: root
+      NODE_ENV: development
+    links:
+      - redis:redis
+    ports:
+      - 9229:9229
+volumes:
+  backend-swordhealth-node-modules:

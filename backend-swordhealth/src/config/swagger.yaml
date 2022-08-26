@@ -1,0 +1,116 @@
+swagger: "2.0"
+info:
+  description: "SwordHealth Challenge"
+  version: "1.0.0"
+  title: "swordhealth"
+basePath: "/api/v1"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+tags:
+  - name: "users"
+    description: "user entrypoint"
+  - name: "tasks"
+    description: "task entrypoint"
+  - name: "authentication"
+    description: "authentication entrypoint"
+definitions:
+  User:
+    type: "object"
+    required:
+      - "email"
+      - "name"
+      - "role"
+      - "password"
+    properties:
+      email:
+        type: "string"
+      name: 
+        type: "string"
+      role:
+        type: "string"
+        description: "User role"
+        enum:
+          - "manager"
+          - "technician"
+      password:
+        type: "string"
+  Credential:
+    type: "object"
+    properties: 
+      token:
+        type: "string"
+paths:
+  /health:
+    get:
+      tags:
+        - 'others'
+      x-swagger-router-controller: app
+      summary: healthcheck
+      operationId: isHealthly
+      responses:
+        204:
+          description: yes, it is.
+  /user:
+    post:
+      tags:
+        - 'users'
+      x-swagger-router-controller: app
+      summary: create one user
+      operationId: createUser
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: user has been created!
+        400:
+          description: BadRequest
+        401:
+          description: Unauthorized
+        500:
+          description: internalError
+  /login:
+    get:
+      tags:
+        - 'authentication'
+      x-swagger-router-controller: app
+      summary: create one user
+      operationId: loginUser
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "query"
+        description: "The user name for login"
+        required: true
+        type: "string"
+      - name: "password"
+        in: "query"
+        description: "The password for login"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful logged in"
+          schema:
+            $ref: "#/definitions/Credential"
+        500:
+          description: internalError
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Bearer token
