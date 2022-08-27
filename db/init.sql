@@ -16,9 +16,17 @@ id int NOT NULL AUTO_INCREMENT,
 user_id int NOT NULL,
 name varchar(255) NOT NULL,
 summary varchar(2500) NOT NULL,
-perfomed_task DATE NULL,
+perfomed_task_date DATE NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NULL,
 PRIMARY KEY (id),
 FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE USER 'sword'@'%' IDENTIFIED BY 'sword';
+GRANT CREATE ON * . * TO 'sword'@'%';
+GRANT DELETE ON * . * TO 'sword'@'%';
+GRANT INSERT ON * . * TO 'sword'@'%';
+GRANT SELECT ON * . * TO 'sword'@'%';
+GRANT UPDATE ON * . * TO 'sword'@'%';
+FLUSH PRIVILEGES;
