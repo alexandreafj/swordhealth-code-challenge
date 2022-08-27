@@ -6,6 +6,8 @@ services:
     container_name: redis
     ports: 
       - 6379:6379
+    networks:
+        - rabbitmq_nodejs
   mysql:
    image: mysql
    restart: always
@@ -16,6 +18,8 @@ services:
      MYSQL_ROOT_PASSWORD: root
    volumes:
     - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+   networks:
+    - rabbitmq_nodejs
   backend-swordhealth-proxy:
     build:
       context: ./backend-swordhealth
@@ -27,6 +31,8 @@ services:
       - backend-swordhealth
     links:
       - backend-swordhealth
+    networks:
+      - rabbitmq_nodejs
   backend-swordhealth:
     build:
       context: ./backend-swordhealth
@@ -52,9 +58,43 @@ services:
       JWT_EXPIRES_IN: 1 day
       JWT_ISS: swordhealth
       JWT_AUD: localhost
+      AMQP_QUEUE: manager.taks_perfomed
+      AMQP_URL: amqp://guest:guest@rabbitmq:5672
     links:
       - redis:redis
     ports:
       - 9229:9229
+    networks:
+      - rabbitmq_nodejs
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5673:5672
+        - 15673:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - rabbitmq_nodejs
+  notification-consumer:
+    build:
+      context: ./notification-consumer
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./notification-consumer:/notification-consumer
+    depends_on:
+      - "rabbitmq"
+    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node consumer.js'
+    environment:
+      NODE_ENV: development
+      AMQP_QUEUE: manager.taks_perfomed
+      AMQP_URL: amqp://guest:guest@rabbitmq:5672
+    networks:
+      - rabbitmq_nodejs
+networks:
+  rabbitmq_nodejs:
+    driver: bridge
 volumes:
   backend-swordhealth-node-modules:
+  notification-manager-node-modules:

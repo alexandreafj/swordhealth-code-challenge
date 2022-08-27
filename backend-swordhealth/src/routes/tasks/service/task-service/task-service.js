@@ -1,9 +1,10 @@
 const Joi = require("joi");
 const httpErrors = require("http-errors");
 class TaskService {
-  constructor({ taskRepository, userRepository }) {
+  constructor({ taskRepository, userRepository, rabbitmq }) {
     this.taskRepository = taskRepository;
     this.userRepository = userRepository;
+    this.rabbitmq = rabbitmq;
   }
   validateCreateTaskSchema = ({ task = { name: "", summary: "" } }) => {
     const schema = Joi.object({
@@ -41,15 +42,12 @@ class TaskService {
     }
 
     await this.taskRepository.update({ taskId, task: taskToUpdate, userId });
-    const [taskUpdated, managers] = await Promise.all([
-      this.taskRepository.getById({ taskId, userId }),
-      this.userRepository.getManagers(),
-    ]);
-    const hasManagersToNotify = managers.length > 0;
-    const shouldNotify =
-      hasManagersToNotify && taskUpdated.perfomed_task !== null;
+    const taskUpdated = await this.taskRepository.getById({ taskId, userId });
+    const shouldNotify = taskUpdated.perfomed_task !== null;
     if (shouldNotify) {
       //notify
+      const message = `The tech ${user.name} performed the task ${taskUpdated.name} on date ${taskUpdated.perfomed_task}`;
+      this.rabbitmq.sendNotification({ message });
     }
   };
 }

@@ -3,4 +3,5 @@ module.exports = Object.freeze({
   ...require("./db-connection/db-connection"),
   ...require("./bcrypt/bcrypt"),
   ...require("./jwt/jwt"),
+  ...require("./rabbitmq/rabbitmq"),
 });

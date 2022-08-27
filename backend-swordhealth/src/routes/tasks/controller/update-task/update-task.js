@@ -3,6 +3,7 @@ const {
 } = require("../../../../common");
 const { StatusCodes } = require("http-status-codes");
 const { taskService } = require("../../service");
+const { rabbitmq } = require("../../../../common/service");
 
 const updateTask = async (req, res, next) => {
   try {

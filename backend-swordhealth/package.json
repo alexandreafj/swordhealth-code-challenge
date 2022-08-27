@@ -7,14 +7,14 @@
     "start": "docker-compose up --build",
     "start:api:dev": "./node_modules/.bin/nodemon -e \"*\" --legacy-watch --watch ./src --inspect=0.0.0.0:9229 --exec node src/app.js",
     "start:api:prd": "node src/app.js",
-    "test:unity": "",
-    "test:integration": "",
-    "test": "jest"
+    "test:unity": "jest",
+    "test:integration": ""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.10.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "compression": "^1.7.4",
