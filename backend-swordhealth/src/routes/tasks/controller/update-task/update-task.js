@@ -3,7 +3,6 @@ const {
 } = require("../../../../common");
 const { StatusCodes } = require("http-status-codes");
 const { taskService } = require("../../service");
-const { rabbitmq } = require("../../../../common/service");
 
 const updateTask = async (req, res, next) => {
   try {
@@ -13,6 +12,14 @@ const updateTask = async (req, res, next) => {
       return res
         .status(StatusCodes.UNAUTHORIZED)
         .send("User is not authorized to perfom this action");
+    }
+    const hasErrorOnSchemaValidation = taskService.validateUpdateTaskSchema({
+      task,
+    });
+    if (hasErrorOnSchemaValidation) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ details: hasErrorOnSchemaValidation.details });
     }
     const shouldUpdate = Object.keys(task).length > 1;
     if (shouldUpdate) {
