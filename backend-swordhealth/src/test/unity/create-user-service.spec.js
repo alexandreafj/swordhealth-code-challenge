@@ -46,17 +46,22 @@ describe("create-user-service", () => {
     expect(hasErrorOnSchemaValidation.details[0].path[0]).toBe("name");
   });
 
-  it("should return error status 409", async () => {
+  it("should throw error when trying to create duplicate users", async () => {
     const mockBody = {
       email: "teste@teste.com",
       name: "teste",
       password: "123",
     };
-    const mockFindUserByEmail = jest
-      .spyOn(usersService.userRepository, "findUserByEmail")
+    const mockfindByEmail = jest
+      .spyOn(usersService.userRepository, "findByEmail")
       .mockImplementation(() => Promise.resolve([0, 1, 0]));
-    await expect(usersService.createUser({ body: mockBody })).rejects.toThrow();
-    expect(mockFindUserByEmail).toBeCalledTimes(1);
+    await expect(usersService.createUser({ body: mockBody })).rejects.toThrow({
+      message: "Email already exists",
+      details: {
+        message: "Email already exists",
+      },
+    });
+    expect(mockfindByEmail).toBeCalledTimes(1);
   });
 
   it("should return create user", async () => {
@@ -65,14 +70,14 @@ describe("create-user-service", () => {
       name: "teste",
       password: "123",
     };
-    const mockFindUserByEmail = jest
-      .spyOn(usersService.userRepository, "findUserByEmail")
+    const mockfindByEmail = jest
+      .spyOn(usersService.userRepository, "findByEmail")
       .mockImplementation(() => Promise.resolve([]));
     const mockInsertUser = jest
       .spyOn(usersService.userRepository, "insertUser")
       .mockImplementation(() => Promise.resolve());
     await expect(usersService.createUser({ body: mockBody }));
-    expect(mockFindUserByEmail).toBeCalledTimes(1);
+    expect(mockfindByEmail).toBeCalledTimes(1);
     expect(mockInsertUser).toBeCalledTimes(1);
   });
 });
