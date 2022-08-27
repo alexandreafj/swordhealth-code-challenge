@@ -48,6 +48,10 @@ services:
       MYSQL_PASS: root
       MYSQL_DATABASE: maintenance_tasks
       NODE_ENV: development
+      JWT_PRIVATE_KEY: backend-challenge-sword
+      JWT_EXPIRES_IN: 1 day
+      JWT_ISS: swordhealth
+      JWT_AUD: localhost
     links:
       - redis:redis
     ports:
