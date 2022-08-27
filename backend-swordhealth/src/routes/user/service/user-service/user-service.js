@@ -35,7 +35,7 @@ class UserService {
     body.password = this.bcrypt.generateHashPassword({
       password: body.password,
     });
-    await this.userRepository.insertUser({ user: body });
+    await this.userRepository.insert({ user: body });
   };
 }
 module.exports = { UserService };

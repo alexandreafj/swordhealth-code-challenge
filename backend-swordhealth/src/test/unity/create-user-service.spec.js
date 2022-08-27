@@ -73,11 +73,11 @@ describe("create-user-service", () => {
     const mockfindByEmail = jest
       .spyOn(usersService.userRepository, "findByEmail")
       .mockImplementation(() => Promise.resolve([]));
-    const mockInsertUser = jest
-      .spyOn(usersService.userRepository, "insertUser")
+    const mockinsert = jest
+      .spyOn(usersService.userRepository, "insert")
       .mockImplementation(() => Promise.resolve());
     await expect(usersService.createUser({ body: mockBody }));
     expect(mockfindByEmail).toBeCalledTimes(1);
-    expect(mockInsertUser).toBeCalledTimes(1);
+    expect(mockinsert).toBeCalledTimes(1);
   });
 });

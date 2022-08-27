@@ -16,9 +16,9 @@ id int NOT NULL AUTO_INCREMENT,
 user_id int NOT NULL,
 name varchar(255) NOT NULL,
 summary varchar(2500) NOT NULL,
-perfomed_task DATE NOT NULL,
+perfomed_task DATE NULL,
 created_at DATETIME NOT NULL,
-updated_at DATETIME NOT NULL,
+updated_at DATETIME NULL,
 PRIMARY KEY (id),
 FOREIGN KEY (user_id) REFERENCES users(id)
 );

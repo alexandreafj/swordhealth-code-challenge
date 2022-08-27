@@ -25,7 +25,7 @@ class UserRepository {
       throw error;
     }
   };
-  insertUser = async ({ user }) => {
+  insert = async ({ user }) => {
     const { transaction } = await this.database.getTransaction();
     try {
       await transaction

@@ -1,20 +1,28 @@
 const httpErrors = require("http-errors");
 const jwt = require("jsonwebtoken");
 
-const tokenExpired = ({ bearer_token }) => {
-  const token_payload = jwt.decode(bearer_token, {});
+const tokenExpired = ({ token }) => {
+  const tokenPayload = jwt.decode(token, {});
 
-  const { exp } = token_payload;
+  const { exp, aud, iss } = tokenPayload;
 
-  const unix_format = 1000;
+  const unixFormat = 1000;
 
-  const token_date = new Date(exp * unix_format).getTime();
+  const tokenDate = new Date(exp * unixFormat).getTime();
 
   const today = new Date().getTime();
 
-  const token_has_expired = token_date < today;
+  const hasTokenExpired = tokenDate < today;
 
-  if (token_has_expired) throw new httpErrors.Unauthorized("token expired");
+  if (hasTokenExpired) throw new httpErrors.Unauthorized("token expired");
+
+  const audIsValid = aud === process.env.JWT_AUD;
+
+  if (!audIsValid) throw new httpErrors.Unauthorized("token invalid");
+
+  const issIsValid = iss === process.env.JWT_ISS;
+
+  if (!issIsValid) throw new httpErrors.Unauthorized("token invalid");
 };
 
 const authenticationHandler = (
@@ -23,23 +31,21 @@ const authenticationHandler = (
   _bearer_token,
   callback
 ) => {
-  const remove_bearer_regex = /^Bearer/g;
+  const removeBearerRegex = /^Bearer/g;
 
-  const bearer_token = (_bearer_token || "")
-    .replace(remove_bearer_regex, "")
-    .trim();
+  const token = (_bearer_token || "").replace(removeBearerRegex, "").trim();
 
-  const has_token = !!bearer_token;
+  const hasToken = !!token;
 
-  if (has_token === false) {
+  if (hasToken === false) {
     throw new httpErrors.Unauthorized("missing token");
   }
 
-  tokenExpired({ bearer_token });
+  tokenExpired({ token });
 
-  const token_payload = jwt.decode(bearer_token, {});
+  const tokenPayload = jwt.decode(token, {});
 
-  req.auth = token_payload;
+  req.auth = tokenPayload;
 
   return callback();
 };

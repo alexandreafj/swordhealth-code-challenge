@@ -260,6 +260,15 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - name: "limit"
+        in: "query"
+        description: "limit data"
+        type: "string"
+      - name: "offset"
+        in: "query"
+        description: "page"
+        type: "string"
       responses:
         200:
           description: OK
