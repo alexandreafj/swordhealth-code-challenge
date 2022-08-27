@@ -45,12 +45,9 @@ class TaskService {
       this.taskRepository.getById({ taskId, userId }),
       this.userRepository.getManagers(),
     ]);
-    console.log(taskUpdated);
-    console.log(managers.length);
     const hasManagersToNotify = managers.length > 0;
     const shouldNotify =
       hasManagersToNotify && taskUpdated.perfomed_task !== null;
-    console.log(shouldNotify);
     if (shouldNotify) {
       //notify
     }
