@@ -20,14 +20,8 @@ definitions:
     type: "object"
     required:
       - "id"
-      - "user_id"
-      - "name"
-      - "summary"
-      - "perfomed_task"
     properties:
       id:
-        type: "number"
-      user_id:
         type: "number"
       name:
         type: "string"
@@ -314,7 +308,6 @@ paths:
           description: internalError - UUID to search for logs
           schema:
             $ref: "#/definitions/DefaultResponse"
-  /tasks/{taskId}:
     delete:
       tags:
         - 'tasks'
@@ -329,7 +322,7 @@ paths:
       - "application/json"
       parameters:
       - name: "taskId"
-        in: "path"
+        in: "query"
         description: "Task id to delete"
         required: true
         type: "integer"

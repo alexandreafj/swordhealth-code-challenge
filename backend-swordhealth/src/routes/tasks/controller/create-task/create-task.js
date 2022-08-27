@@ -11,7 +11,7 @@ const createTask = async (req, res, next) => {
     if (userIsManager) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .send("User not authorized to perfom this action");
+        .send("User is not authorized to perfom this action");
     }
     const hasErrorOnSchemaValidation = taskService.validateCreateTaskSchema({
       task,

@@ -42,5 +42,16 @@ class UserRepository {
       throw error;
     }
   };
+  getManagers = async () => {
+    const { connection } = await this.database.getConnection();
+    try {
+      return await connection
+        .select("id", "email", "password", "name", "role")
+        .from("users")
+        .where("role", "manager");
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 module.exports = { UserRepository };
