@@ -1,6 +1,5 @@
 const {
   handler: { httpErrorHandler },
-  service: { bcrypt },
 } = require("../../../../common");
 const httpStatusCodes = require("http-status-codes");
 
@@ -15,10 +14,12 @@ const createUser = async (req, res, next) => {
     if (hasErrorOnSchemaValidation) {
       return res
         .status(httpStatusCodes.BAD_REQUEST)
-        .send(hasErrorOnValidations);
+        .send({ details: hasErrorOnSchemaValidation.details });
     }
     await userService.createUserService({ body });
-    return res.status(httpStatusCodes.OK).send("user has been created");
+    return res
+      .status(httpStatusCodes.OK)
+      .send({ message: "user has been created" });
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }
