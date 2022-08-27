@@ -27,7 +27,7 @@ definitions:
         type: "string"
       summary:
         type: "string"
-      perfomed_task:
+      perfomed_task_date:
         type: "string"
   Task:
     type: "object"
@@ -36,7 +36,7 @@ definitions:
       - "user_id"
       - "name"
       - "summary"
-      - "perfomed_task"
+      - "perfomed_task_date"
       - "created_at"
       - "updated_at"
     properties:
@@ -48,7 +48,7 @@ definitions:
         type: "string"
       summary:
         type: "string"
-      perfomed_task:
+      perfomed_task_date:
         type: "string"
       created_at:
         type: "string"
