@@ -45,7 +45,6 @@ class TaskService {
     const taskUpdated = await this.taskRepository.getById({ taskId, userId });
     const shouldNotify = taskUpdated.perfomed_task !== null;
     if (shouldNotify) {
-      //notify
       const message = `The tech ${user.name} performed the task ${taskUpdated.name} on date ${taskUpdated.perfomed_task}`;
       this.rabbitmq.sendNotification({ message });
     }

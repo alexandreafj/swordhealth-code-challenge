@@ -7,7 +7,7 @@
     "start": "docker-compose up --build",
     "start:api:dev": "./node_modules/.bin/nodemon -e \"*\" --legacy-watch --watch ./src --inspect=0.0.0.0:9229 --exec node src/app.js",
     "start:api:prd": "node src/app.js",
-    "test:unity": "jest",
+    "test:unit": "jest",
     "test:integration": ""
   },
   "keywords": [],
