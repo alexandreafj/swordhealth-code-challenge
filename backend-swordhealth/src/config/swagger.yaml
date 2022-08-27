@@ -70,6 +70,11 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Validation"
+  DefaultResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
 paths:
   /health:
     get:
@@ -102,14 +107,16 @@ paths:
       responses:
         200:
           description: user has been created
+          schema:
+            $ref: "#/definitions/DefaultResponse"
         400:
           description: BadRequest
           schema:
             $ref: "#/definitions/BadRequest"
-        401:
-          description: Unauthorized
         500:
-          description: internalError
+          description: internalError - UUID to search for logs
+          schema:
+            $ref: "#/definitions/DefaultResponse"
   /login:
     get:
       tags:
@@ -138,7 +145,9 @@ paths:
           schema:
             $ref: "#/definitions/Credential"
         500:
-          description: internalError
+          description: internalError - UUID to search for logs
+          schema:
+            $ref: "#/definitions/DefaultResponse"
 securityDefinitions:
   Bearer:
     type: apiKey
