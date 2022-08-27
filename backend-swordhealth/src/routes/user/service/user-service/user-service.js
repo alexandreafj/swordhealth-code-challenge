@@ -1,5 +1,5 @@
 const Joi = require("joi");
-
+const httpErrors = require("http-errors");
 class UserService {
   constructor({ userRepository, bcrypt }) {
     this.userRepository = userRepository;
@@ -25,13 +25,12 @@ class UserService {
   };
 
   createUser = async ({ body }) => {
-    console.log(this.userRepository);
-    const userWithTheSameEmail = await this.userRepository.findUserByEmail({
+    const userWithTheSameEmail = await this.userRepository.findByEmail({
       email: body.email,
     });
     const hasFoundAnyUser = userWithTheSameEmail.length > 0;
     if (hasFoundAnyUser) {
-      throw { message: "Email already exists.", statusCode: 409 };
+      throw new httpErrors.Conflict("Email already exists");
     }
     body.password = this.bcrypt.generateHashPassword({
       password: body.password,
