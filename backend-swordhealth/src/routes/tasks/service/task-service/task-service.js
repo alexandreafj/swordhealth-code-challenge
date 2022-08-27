@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const httpErrors = require("http-errors");
+const { format } = require("date-fns");
 class TaskService {
   constructor({ taskRepository, userRepository, rabbitmq, redis }) {
     this.taskRepository = taskRepository;
@@ -7,15 +8,25 @@ class TaskService {
     this.rabbitmq = rabbitmq;
     this.redis = redis;
   }
-  validateCreateTaskSchema = ({ task = { name: "", summary: "" } }) => {
+  validateCreateTaskSchema = ({ task }) => {
     const schema = Joi.object({
       name: Joi.string().min(5),
       summary: Joi.string().min(5).max(2500),
     });
 
-    const { name, summary } = task;
+    const { error } = schema.validate(task);
 
-    const { error } = schema.validate({ name, summary });
+    return error;
+  };
+  validateUpdateTaskSchema = ({ task }) => {
+    const schema = Joi.object({
+      id: Joi.number(),
+      name: Joi.string().min(5),
+      summary: Joi.string().min(5).max(2500),
+      perfomed_task_date: Joi.string(),
+    });
+
+    const { error } = schema.validate(task);
 
     return error;
   };
@@ -37,7 +48,7 @@ class TaskService {
     await this.redis.set({ key, value: tasks });
     return tasks;
   };
-  deleteTask = async ({ taskId }) => {
+  deleteTask = async ({ taskId, user }) => {
     await this.taskRepository.delete({ taskId });
     const key = `sword:${user.id}:get`;
     await this.redis.del({ key });
@@ -49,7 +60,7 @@ class TaskService {
     const userId = user.id;
 
     const taskDb = await this.taskRepository.getById({ taskId, userId });
-    const hasPerfomedTaskAlready = taskDb.perfomed_task !== null;
+    const hasPerfomedTaskAlready = taskDb.perfomed_task_date !== null;
     if (hasPerfomedTaskAlready) {
       throw new httpErrors.BadRequest("Task already has been perfomed.");
     }
@@ -58,9 +69,11 @@ class TaskService {
     const key = `sword:${user.id}:get`;
     await this.redis.del({ key });
     const taskUpdated = await this.taskRepository.getById({ taskId, userId });
-    const shouldNotify = taskUpdated.perfomed_task !== null;
+    const shouldNotify = taskUpdated.perfomed_task_date !== null;
     if (shouldNotify) {
-      const message = `The tech ${user.name} performed the task ${taskUpdated.name} on date ${taskUpdated.perfomed_task}`;
+      const dateFormat = "yyyy-MM-dd";
+      const date = format(taskUpdated.perfomed_task_date, dateFormat);
+      const message = `The tech ${user.name} performed the task ${taskUpdated.name} on date ${date}`;
       this.rabbitmq.sendNotification({ message });
     }
   };
