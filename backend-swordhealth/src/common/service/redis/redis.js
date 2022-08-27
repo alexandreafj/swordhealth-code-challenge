@@ -47,4 +47,33 @@ const get = async ({ key }) => {
   }
 };
 
-module.exports = { redis: { set, get } };
+const del = async ({ key }) => {
+  try {
+    const patternKey = `${key}:*`;
+
+    const redisClient = getClient();
+
+    await redisClient.connect();
+
+    const redisKeys = await redisClient.keys(patternKey);
+
+    const hasKeysToDelete = redisKeys.length > 0;
+
+    if (hasKeysToDelete) {
+      new Promise((resolve, reject) => {
+        const transaction = redisClient.multi();
+
+        redisKeys.forEach((key) => transaction.del(key));
+
+        transaction.exec((err, reply) => {
+          if (err) reject(err);
+          resolve(reply);
+        });
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+module.exports = { redis: { set, get, del } };
