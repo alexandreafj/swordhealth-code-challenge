@@ -1,6 +1,7 @@
 const Joi = require("joi");
+const JoiDate = require("joi").extend(require("@joi/date"));
 const httpErrors = require("http-errors");
-const { format } = require("date-fns");
+
 class TaskService {
   constructor({ taskRepository, userRepository, rabbitmq, redis }) {
     this.taskRepository = taskRepository;
@@ -23,7 +24,7 @@ class TaskService {
       id: Joi.number(),
       name: Joi.string().min(5),
       summary: Joi.string().min(5).max(2500),
-      perfomed_task_date: Joi.string(),
+      perfomed_task_date: JoiDate.date().format("YYYY-MM-DD").raw(),
     });
 
     const { error } = schema.validate(task);
