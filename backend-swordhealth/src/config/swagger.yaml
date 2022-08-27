@@ -268,10 +268,6 @@ paths:
           description: OK
           schema:
             $ref: "#/definitions/TasksGetResponse"
-        400:
-          description: BadRequest
-          schema:
-            $ref: "#/definitions/BadRequest"
         500:
           description: internalError - UUID to search for logs
           schema:
@@ -303,7 +299,7 @@ paths:
         400:
           description: BadRequest
           schema:
-            $ref: "#/definitions/BadRequest"
+            $ref: "#/definitions/DefaultResponse"
         500:
           description: internalError - UUID to search for logs
           schema:
@@ -331,10 +327,6 @@ paths:
           description: task has been deleted
           schema:
             $ref: "#/definitions/DefaultResponse"
-        400:
-          description: BadRequest
-          schema:
-            $ref: "#/definitions/BadRequest"
         500:
           description: internalError - UUID to search for logs
           schema:
