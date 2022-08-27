@@ -129,14 +129,14 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "username"
+      - name: "email"
         in: "query"
-        description: "The user name for login"
+        description: "The user email"
         required: true
         type: "string"
       - name: "password"
         in: "query"
-        description: "The password for login"
+        description: "The user password "
         required: true
         type: "string"
       responses:
