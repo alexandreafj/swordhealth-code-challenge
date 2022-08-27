@@ -3,6 +3,8 @@ const SwaggerUi = require("swagger-ui-express");
 const express = require("express");
 const routes = require("./routes");
 const common = require("./common");
+const helmet = require("helmet");
+const compression = require("compression");
 const { handlers } = common.handler.buildRoutesHandler({ routes });
 const port = Number(process.env.PORT || 8089);
 
@@ -20,6 +22,9 @@ const onSwaggerCreated = (error, swaggerExpress) => {
 
   const swaggerDocument = swaggerExpress.runner.swagger;
   app.use("/api/v1/docs", SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
+  app.use(helmet());
+  app.use(compression());
+  app.disable("x-powered-by");
   swaggerExpress.register(app); // register middlewares
   app.listen(port, () => console.info("onAppStart", { port }));
 };

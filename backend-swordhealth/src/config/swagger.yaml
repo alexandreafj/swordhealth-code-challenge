@@ -16,6 +16,69 @@ tags:
   - name: "authentication"
     description: "authentication entrypoint"
 definitions:
+  UpdateTask:
+    type: "object"
+    required:
+      - "id"
+      - "user_id"
+      - "name"
+      - "summary"
+      - "perfomed_task"
+    properties:
+      id:
+        type: "number"
+      user_id:
+        type: "number"
+      name:
+        type: "string"
+      summary:
+        type: "string"
+      perfomed_task:
+        type: "string"
+  Task:
+    type: "object"
+    required:
+      - "id"
+      - "user_id"
+      - "name"
+      - "summary"
+      - "perfomed_task"
+      - "created_at"
+      - "updated_at"
+    properties:
+      id:
+        type: "number"
+      user_id:
+        type: "number"
+      name:
+        type: "string"
+      summary:
+        type: "string"
+      perfomed_task:
+        type: "string"
+      created_at:
+        type: "string"
+      updated_at:
+        type: "string"
+  TasksGetResponse:
+    type: "object"
+    required:
+      - "tasks"
+    properties:
+      tasks:
+        type: "array"
+        items:
+          $ref: "#/definitions/Task"
+  CreateTask:
+    type: "object"
+    required:
+      - "name"
+      - "summary"
+    properties:
+      name:
+        type: "string"
+      summary:
+        type: "string"
   User:
     type: "object"
     required:
@@ -105,7 +168,7 @@ paths:
         schema:
           $ref: "#/definitions/User"
       responses:
-        200:
+        201:
           description: user has been created
           schema:
             $ref: "#/definitions/DefaultResponse"
@@ -113,6 +176,10 @@ paths:
           description: BadRequest
           schema:
             $ref: "#/definitions/BadRequest"
+        409:
+          description: Conflict
+          schema:
+            $ref: "#/definitions/DefaultResponse"
         500:
           description: internalError - UUID to search for logs
           schema:
@@ -144,6 +211,128 @@ paths:
           description: "successful logged in"
           schema:
             $ref: "#/definitions/Credential"
+        500:
+          description: internalError - UUID to search for logs
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+  /tasks:
+    post:
+      tags:
+        - 'tasks'
+      x-swagger-router-controller: app
+      summary: create one task
+      operationId: createTask
+      security:
+        - Bearer: []
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "task object"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateTask"
+      responses:
+        201:
+          description: task has been created
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+        400:
+          description: BadRequest
+          schema:
+            $ref: "#/definitions/BadRequest"
+        500:
+          description: internalError - UUID to search for logs
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+    get:
+      tags:
+        - 'tasks'
+      x-swagger-router-controller: app
+      summary: get many tasks
+      operationId: getTasks
+      security:
+        - Bearer: []
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/TasksGetResponse"
+        400:
+          description: BadRequest
+          schema:
+            $ref: "#/definitions/BadRequest"
+        500:
+          description: internalError - UUID to search for logs
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+    put:
+      tags:
+        - 'tasks'
+      x-swagger-router-controller: app
+      summary: update one task
+      operationId: updateTask
+      security:
+        - Bearer: []
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "task object"
+        required: true
+        schema:
+          $ref: "#/definitions/UpdateTask"
+      responses:
+        204:
+          description: task has been updated
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+        400:
+          description: BadRequest
+          schema:
+            $ref: "#/definitions/BadRequest"
+        500:
+          description: internalError - UUID to search for logs
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+  /tasks/{taskId}:
+    delete:
+      tags:
+        - 'tasks'
+      x-swagger-router-controller: app
+      summary: delete one task
+      operationId: deleteTask
+      security:
+        - Bearer: []
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "taskId"
+        in: "path"
+        description: "Task id to delete"
+        required: true
+        type: "integer"
+      responses:
+        204:
+          description: task has been deleted
+          schema:
+            $ref: "#/definitions/DefaultResponse"
+        400:
+          description: BadRequest
+          schema:
+            $ref: "#/definitions/BadRequest"
         500:
           description: internalError - UUID to search for logs
           schema:

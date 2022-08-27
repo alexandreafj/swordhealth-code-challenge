@@ -1,38 +1,48 @@
-const { createClient } = require("redis");
+const redis = require("redis");
 
 const getClient = () => {
-  const redis_client = createClient({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT || "6379",
-  });
-  return redis_client;
+  return redis.createClient({ host: "redis" });
 };
 
-const setKey = async ({ key, value, expire_format = "h", expire = 1 }) => {
+const set = async ({ key, value, expireFormat = "h", expire = 1 }) => {
   try {
-    const expire_in_hours = 60 * 60;
+    const expireInHours = 60 * 60;
 
-    const type_expire = {
-      h: expire_in_hours * expire,
-      d: expire_in_hours * 24 * expire,
+    const typeExpiration = {
+      h: expireInHours * expire,
+      d: expireInHours * 24 * expire,
     };
 
-    const expire_data = type_expire[expire_format] || expire_in_hours * expire;
+    const expireIn = typeExpiration[expireFormat] || expireInHours * expire;
 
-    const redis_client = getClient();
+    const redisClient = getClient();
 
-    await redis_client.set(key, JSON.stringify(value), "EX", expire_data);
+    await redisClient.connect();
+
+    await redisClient.set(key, JSON.stringify(value), "EX", expireIn);
+
+    await redisClient.disconnect();
   } catch (error) {
     console.error(error);
   }
 };
 
-const getKey = async ({ key }) => {
-  const redis_client = getClient();
+const get = async ({ key }) => {
+  try {
+    const redisClient = getClient();
 
-  const data = await redis_client.get(key);
+    await redisClient.connect();
 
-  return data;
+    const data = await redisClient.get(key);
+    console.log("data");
+    console.log(data);
+    await redisClient.disconnect();
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
 
-module.exports = { redis: { setKey, getKey } };
+module.exports = { redis: { set, get } };

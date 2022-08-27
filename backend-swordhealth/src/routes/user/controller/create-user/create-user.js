@@ -18,7 +18,7 @@ const createUser = async (req, res, next) => {
     }
     await usersService.createUser({ body });
     return res
-      .status(StatusCodes.OK)
+      .status(StatusCodes.CREATED)
       .send({ message: "user has been created" });
   } catch (error) {
     return httpErrorHandler({ req, res, error });
