@@ -14,7 +14,7 @@ const deleteTask = async (req, res, next) => {
         .send("User is not authorized to perfom this action");
     }
     const { taskId } = req.query;
-    await taskService.deleteTask({ taskId });
+    await taskService.deleteTask({ taskId, user });
     return res.status(StatusCodes.NO_CONTENT).send("");
   } catch (error) {
     return httpErrorHandler({ req, res, error });
