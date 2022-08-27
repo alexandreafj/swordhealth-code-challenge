@@ -45,13 +45,15 @@ services:
     depends_on: 
       - redis
       - mysql
+      - rabbitmq
+      - notification-consumer
     environment:
       PORT: 8089
       REDIS_HOST: redis
       REDIS_PORT: 6379
       MYSQL_HOST: mysql
-      MYSQL_USER: root
-      MYSQL_PASS: root
+      MYSQL_USER: sword
+      MYSQL_PASS: sword
       MYSQL_DATABASE: maintenance_tasks
       NODE_ENV: development
       JWT_PRIVATE_KEY: backend-challenge-sword
