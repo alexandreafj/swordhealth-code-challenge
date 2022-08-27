@@ -2,7 +2,19 @@ class UserRepository {
   constructor({ database }) {
     this.database = database;
   }
-  findUserByEmail = async ({ email }) => {
+  findOne = async ({ email }) => {
+    const { connection } = await this.database.getConnection();
+    try {
+      return await connection
+        .select("id", "email", "password", "name", "role")
+        .from("users")
+        .where("email", email)
+        .limit(1);
+    } catch (error) {
+      throw error;
+    }
+  };
+  findByEmail = async ({ email }) => {
     const { connection } = await this.database.getConnection();
     try {
       return await connection
