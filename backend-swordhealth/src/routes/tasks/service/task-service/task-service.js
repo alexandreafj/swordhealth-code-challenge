@@ -68,14 +68,8 @@ class TaskService {
     await this.taskRepository.update({ taskId, task: taskToUpdate, userId });
     const key = `sword:${user.id}:get`;
     await this.redis.del({ key });
-    const taskUpdated = await this.taskRepository.getById({ taskId, userId });
-    const shouldNotify = taskUpdated.perfomed_task_date !== null;
-    if (shouldNotify) {
-      const dateFormat = "yyyy-MM-dd";
-      const date = format(taskUpdated.perfomed_task_date, dateFormat);
-      const message = `The tech ${user.name} performed the task ${taskUpdated.name} on date ${date}`;
-      this.rabbitmq.sendNotification({ message });
-    }
+    const message = `The tech ${user.name} performed the task ${task.name} on date ${task.perfomed_task_date}`;
+    this.rabbitmq.sendNotification({ message });
   };
 }
 module.exports = { TaskService };
