@@ -1,11 +1,15 @@
 const {
   handler: { httpErrorHandler },
 } = require("../../../../common");
-const httpStatusCodes = require("http-status-codes");
+const { StatusCodes } = require("http-status-codes");
+const { loginService } = require("../../service");
 
-const loginUser = async () => {
+const loginUser = async (req, res, next) => {
   try {
-    return res.status(httpStatusCodes.OK);
+    const { email, password } = req.query;
+    const { user } = await loginService.verifyCredentials({ email, password });
+    const { token } = loginService.generateToken({ user });
+    return res.status(StatusCodes.OK).send({ token });
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }
