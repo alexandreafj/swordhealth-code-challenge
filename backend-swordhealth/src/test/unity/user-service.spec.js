@@ -1,6 +1,6 @@
 const { usersService } = require("../../routes/user/service");
 
-describe("create-user-service", () => {
+describe("user-service", () => {
   it("should return password error when validate schema", () => {
     const mockBody = {
       email: "teste@teste.com",
