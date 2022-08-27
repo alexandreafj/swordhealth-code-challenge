@@ -1,7 +1,10 @@
 const redis = require("redis");
 
 const getClient = () => {
-  return redis.createClient({ host: "redis" });
+  var redisClient = redis.createClient({
+    url: `redis://${process.env.REDIS_HOST}:6379`,
+  });
+  return redisClient;
 };
 
 const set = async ({ key, value, expireFormat = "h", expire = 1 }) => {
@@ -34,8 +37,7 @@ const get = async ({ key }) => {
     await redisClient.connect();
 
     const data = await redisClient.get(key);
-    console.log("data");
-    console.log(data);
+
     await redisClient.disconnect();
 
     return data;
