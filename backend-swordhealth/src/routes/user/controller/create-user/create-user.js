@@ -1,24 +1,24 @@
 const {
   handler: { httpErrorHandler },
 } = require("../../../../common");
-const httpStatusCodes = require("http-status-codes");
+const { StatusCodes } = require("http-status-codes");
 
-const userService = require("../../service");
+const { usersService } = require("../../service");
 
 const createUser = async (req, res, next) => {
   try {
     const { body } = req;
-    const hasErrorOnSchemaValidation = userService.validateCreateUserSchema({
+    const hasErrorOnSchemaValidation = usersService.validateCreateUserSchema({
       body,
     });
     if (hasErrorOnSchemaValidation) {
       return res
-        .status(httpStatusCodes.BAD_REQUEST)
+        .status(StatusCodes.BAD_REQUEST)
         .send({ details: hasErrorOnSchemaValidation.details });
     }
-    await userService.createUserService({ body });
+    await usersService.createUser({ body });
     return res
-      .status(httpStatusCodes.OK)
+      .status(StatusCodes.OK)
       .send({ message: "user has been created" });
   } catch (error) {
     return httpErrorHandler({ req, res, error });

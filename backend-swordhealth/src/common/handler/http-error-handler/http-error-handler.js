@@ -1,11 +1,11 @@
-const httpStatusCodes = require("http-status-codes");
+const { StatusCodes } = require("http-status-codes");
 const uuid = require("uuid");
 
 const httpErrorHandler = ({ req, res, error }) => {
   const response_status_code =
-    error.statusCode || httpStatusCodes.INTERNAL_SERVER_ERROR;
+    error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
   const is_internal =
-    response_status_code === httpStatusCodes.INTERNAL_SERVER_ERROR;
+    response_status_code === StatusCodes.INTERNAL_SERVER_ERROR;
   const error_id = uuid.v4();
   const internal_error_message = `internal server error (${error_id})`;
   const response = { message: internal_error_message };
