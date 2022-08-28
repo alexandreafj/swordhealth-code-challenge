@@ -3,8 +3,10 @@ const { UserRepository } = require("../../user/repository");
 const { TaskService } = require("./task-service/task-service");
 const { service } = require("../../../common");
 
-const { database, rabbitmq, redis } = service;
+const { Database, rabbitmq, Cache } = service;
 
+const database = new Database();
+const cache = new Cache();
 const taskRepository = new TaskRepository({ database });
 const userRepository = new UserRepository({ database });
 
@@ -12,7 +14,7 @@ const taskService = new TaskService({
   taskRepository,
   userRepository,
   rabbitmq,
-  redis,
+  cache,
 });
 
 module.exports = Object.freeze({

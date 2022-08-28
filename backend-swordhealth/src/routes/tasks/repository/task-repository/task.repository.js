@@ -32,10 +32,13 @@ class TaskRepository {
       throw error;
     }
   };
-  delete = async ({ taskId }) => {
+  delete = async ({ taskId, userId }) => {
     const { transaction } = await this.database.getTransaction();
     try {
-      await transaction("tasks").where("id", taskId).del();
+      await transaction("tasks")
+        .where("id", taskId)
+        .andWhere("user_id", userId)
+        .del();
       this.database.commitTransaction({ transaction });
     } catch (error) {
       this.database.rollbackTransaction({ transaction });

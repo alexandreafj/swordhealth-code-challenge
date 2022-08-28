@@ -3,11 +3,11 @@ const JoiDate = require("joi").extend(require("@joi/date"));
 const httpErrors = require("http-errors");
 
 class TaskService {
-  constructor({ taskRepository, userRepository, rabbitmq, redis }) {
+  constructor({ taskRepository, userRepository, rabbitmq, cache }) {
     this.taskRepository = taskRepository;
     this.userRepository = userRepository;
     this.rabbitmq = rabbitmq;
-    this.redis = redis;
+    this.cache = cache;
   }
   validateCreateTaskSchema = ({ task }) => {
     const schema = Joi.object({
@@ -36,23 +36,29 @@ class TaskService {
     task.created_at = new Date();
     await this.taskRepository.insert({ task });
     const key = `sword:${user.id}:get`;
-    await this.redis.del({ key });
+    await this.cache.del({ key });
   };
   getTasks = async ({ user, filters }) => {
     const key = `sword:${user.id}:get:${filters.limit}:${filters.offset}`;
-    const rawData = await this.redis.get({ key });
+    const rawData = await this.cache.get({ key });
     if (rawData) {
       const tasks = JSON.parse(rawData);
       return tasks;
     }
     const tasks = await this.taskRepository.getAll({ user, filters });
-    await this.redis.set({ key, value: tasks });
+    await this.cache.set({ key, value: tasks });
     return tasks;
   };
   deleteTask = async ({ taskId, user }) => {
-    await this.taskRepository.delete({ taskId });
+    const { id: userId } = user;
+    const task = await this.taskRepository.getById({ taskId, userId });
+    const isTaskIdLinkedWithUser = !!task;
+    if (isTaskIdLinkedWithUser === false) {
+      throw new httpErrors.Unauthorized("Task does not belongs to the user.");
+    }
+    await this.taskRepository.delete({ taskId, userId });
     const key = `sword:${user.id}:get`;
-    await this.redis.del({ key });
+    await this.cache.del({ key });
   };
   updateTask = async ({ task, user }) => {
     const taskId = task.id;
@@ -68,7 +74,7 @@ class TaskService {
 
     await this.taskRepository.update({ taskId, task: taskToUpdate, userId });
     const key = `sword:${user.id}:get`;
-    await this.redis.del({ key });
+    await this.cache.del({ key });
     const message = `The tech ${user.name} performed the task ${task.name} on date ${task.perfomed_task_date}`;
     this.rabbitmq.sendNotification({ message });
   };

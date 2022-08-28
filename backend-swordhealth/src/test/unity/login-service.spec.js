@@ -62,7 +62,7 @@ describe("login-service", () => {
     expect(user.role).toBe("manager");
   });
 
-  it("should return a user", async () => {
+  it("should return a user", () => {
     const mockUser = {
       id: 0,
       name: "alexandre",
@@ -71,10 +71,10 @@ describe("login-service", () => {
     };
     const mockGenerateJwt = jest
       .spyOn(loginService.jwt, "generateJwt")
-      .mockImplementation(() =>
-        Promise.resolve({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" })
-      );
-    const { token } = await loginService.generateToken({ user: mockUser });
+      .mockReturnValue({
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+      });
+    const { token } = loginService.generateToken({ user: mockUser });
     expect(mockGenerateJwt).toBeCalledTimes(1);
     expect(token).toBeDefined();
     expect(token).toBe("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");

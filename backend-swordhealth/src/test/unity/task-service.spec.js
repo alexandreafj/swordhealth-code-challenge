@@ -96,7 +96,7 @@ describe.only("task-service", () => {
       .spyOn(taskService.taskRepository, "insert")
       .mockImplementation(() => Promise.resolve());
     const mockDel = jest
-      .spyOn(taskService.redis, "del")
+      .spyOn(taskService.cache, "del")
       .mockImplementation(() => Promise.resolve());
     const mockTask = {
       name: "mocked",
@@ -120,10 +120,10 @@ describe.only("task-service", () => {
         ])
       );
     const mockGetCache = jest
-      .spyOn(taskService.redis, "get")
+      .spyOn(taskService.cache, "get")
       .mockImplementation(() => Promise.resolve(null));
     const mockSetCache = jest
-      .spyOn(taskService.redis, "set")
+      .spyOn(taskService.cache, "set")
       .mockImplementation(() => Promise.resolve());
     const mockUser = {
       id: 1,
@@ -148,7 +148,7 @@ describe.only("task-service", () => {
       .spyOn(taskService.taskRepository, "getAll")
       .mockImplementation(() => Promise.resolve());
     const mockGetCache = jest
-      .spyOn(taskService.redis, "get")
+      .spyOn(taskService.cache, "get")
       .mockImplementation(() =>
         Promise.resolve(
           JSON.stringify([
@@ -158,7 +158,7 @@ describe.only("task-service", () => {
         )
       );
     const mockSetCache = jest
-      .spyOn(taskService.redis, "set")
+      .spyOn(taskService.cache, "set")
       .mockImplementation(() => Promise.resolve());
     const mockUser = {
       id: 1,
@@ -180,17 +180,38 @@ describe.only("task-service", () => {
 
   it("should delete task", async () => {
     const mockDelCache = jest
-      .spyOn(taskService.redis, "del")
+      .spyOn(taskService.cache, "del")
       .mockImplementation(() => Promise.resolve());
     const mockDeleteTask = jest
       .spyOn(taskService.taskRepository, "delete")
       .mockImplementation(() => Promise.resolve());
+    const mockGetById = jest
+      .spyOn(taskService.taskRepository, "getById")
+      .mockImplementation(() =>
+        Promise.resolve({ id: 1, name: "testeTask", user_id: 1 })
+      );
     const mockUser = {
       id: 1,
     };
     await taskService.deleteTask({ taskId: 1, user: mockUser });
     expect(mockDelCache).toBeCalledTimes(1);
     expect(mockDeleteTask).toBeCalledTimes(1);
+    expect(mockGetById).toBeCalledTimes(1);
+  });
+
+  it("should throw error if task does not belongs to the user", async () => {
+    const mockGetById = jest
+      .spyOn(taskService.taskRepository, "getById")
+      .mockImplementation(() => Promise.resolve(null));
+    const mockUser = {
+      id: 1,
+    };
+    await expect(
+      taskService.deleteTask({ taskId: 1, user: mockUser })
+    ).rejects.toThrow({
+      message: "Task does not belongs to the user.",
+    });
+    expect(mockGetById).toBeCalledTimes(1);
   });
 
   it("should update task and notify manager", async () => {
@@ -201,7 +222,7 @@ describe.only("task-service", () => {
       .spyOn(taskService.taskRepository, "update")
       .mockImplementation(() => Promise.resolve());
     const mockDelCache = jest
-      .spyOn(taskService.redis, "del")
+      .spyOn(taskService.cache, "del")
       .mockImplementation(() => Promise.resolve());
     const mockSendNotification = jest
       .spyOn(taskService.rabbitmq, "sendNotification")
