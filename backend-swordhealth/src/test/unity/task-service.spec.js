@@ -223,6 +223,52 @@ describe.only("task-service", () => {
     expect(mockSendNotification).toBeCalledTimes(1);
   });
 
+  it("should throw error if task don;t belong to user", async () => {
+    const mockGetById = jest
+      .spyOn(taskService.taskRepository, "getById")
+      .mockImplementation(() => Promise.resolve(null));
+    const mockUser = {
+      id: 1,
+      name: "teste1",
+    };
+    const mockTask = {
+      id: 1,
+      name: "teste1",
+      summary: "teste1",
+      perfomed_task_update: "2022-08-27",
+    };
+    await expect(
+      taskService.updateTask({ task: mockTask, user: mockUser })
+    ).rejects.toThrow({
+      message: "Task does not belongs to user.",
+    });
+    expect(mockGetById).toBeCalledTimes(1);
+  });
+
+  it("should throw error when update the task already has been perfomed", async () => {
+    const mockGetById = jest
+      .spyOn(taskService.taskRepository, "getById")
+      .mockImplementation(() =>
+        Promise.resolve({ perfomed_task_date: "2021-01-01" })
+      );
+    const mockUser = {
+      id: 1,
+      name: "teste1",
+    };
+    const mockTask = {
+      id: 1,
+      name: "teste1",
+      summary: "teste1",
+      perfomed_task_update: "2022-08-27",
+    };
+    await expect(
+      taskService.updateTask({ task: mockTask, user: mockUser })
+    ).rejects.toThrow({
+      message: "Task already has been perfomed.",
+    });
+    expect(mockGetById).toBeCalledTimes(1);
+  });
+
   it("should update task throw error", async () => {
     const mockGetById = jest
       .spyOn(taskService.taskRepository, "getById")

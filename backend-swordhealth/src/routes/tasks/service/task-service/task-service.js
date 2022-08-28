@@ -61,6 +61,11 @@ class TaskService {
     const userId = user.id;
 
     const taskDb = await this.taskRepository.getById({ taskId, userId });
+    const foundTask = !!taskDb;
+    if (foundTask === false) {
+      throw new httpErrors.BadRequest("Task does not belongs to user.");
+    }
+
     const hasPerfomedTaskAlready = taskDb.perfomed_task_date !== null;
     if (hasPerfomedTaskAlready) {
       throw new httpErrors.BadRequest("Task already has been perfomed.");
