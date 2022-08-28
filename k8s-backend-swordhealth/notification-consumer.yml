@@ -21,14 +21,6 @@ spec:
               value: "manager.taks_perfomed"
             - name: AMQP_URL
               value: "rabbitmq-cluster"
-          livenessProbe:
-            httpGet:
-              path: /api/v1/docs/?nocache=true
-              port: 8089
-            failureThreshold: 3
-            periodSeconds: 20
-            successThreshold: 1
-            timeoutSeconds: 5
           imagePullPolicy: Always
           resources:
             requests:
