@@ -13,3 +13,21 @@ Reach by terminal the backend-swordhealth folder and execute:
 ```
 npm run test:unit
 ```
+## How to test it
+Create a technician and manager user after the api initialize.
+```
+curl --request POST \
+  --url http://localhost:8080/api/v1/user \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"email": "teste01@teste.com",
+	"name": "teste",
+	"password": "123456",
+	"role": "technician"
+}'
+```
+Get a token to be able to create,update,delete and get tasks.
+```
+curl --request GET \
+  --url 'http://localhost:8080/api/v1/login?email=teste01%40teste.com&password=123456'
+```

@@ -2,7 +2,8 @@ const {
   service: { Jwt },
 } = require("../../common");
 const jsonwebtoken = require("jsonwebtoken");
-
+process.env.JWT_AUD = "sword";
+process.env.JWT_ISS = "sword";
 describe("Jwt", () => {
   let jwt = null;
   beforeEach(() => {
@@ -22,12 +23,12 @@ describe("Jwt", () => {
     expect(mockSign).toBeCalledTimes(1);
   });
 
-  it.skip("should throw token expired", () => {
+  it("should validate token", () => {
     const mockVerify = jest.spyOn(jsonwebtoken, "verify").mockReturnValue();
     const mockDecode = jest
       .spyOn(jsonwebtoken, "decode")
-      .mockReturnValue({ exp: 1401708019, aud: "", iss: "" });
-    expect(jwt.validateToken({ token: "" })).rejects.toThrow();
+      .mockReturnValue({ exp: 2401708019, aud: "sword", iss: "sword" });
+    jwt.validateToken({ token: "" });
     expect(mockDecode).toBeCalledTimes(1);
     expect(mockVerify).toBeCalledTimes(1);
   });
