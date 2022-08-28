@@ -57,9 +57,6 @@ describe("user-service", () => {
       .mockImplementation(() => Promise.resolve([0, 1, 0]));
     await expect(usersService.createUser({ body: mockBody })).rejects.toThrow({
       message: "Email already exists",
-      details: {
-        message: "Email already exists",
-      },
     });
     expect(mockfindByEmail).toBeCalledTimes(1);
   });

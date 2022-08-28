@@ -243,9 +243,6 @@ describe.only("task-service", () => {
       taskService.updateTask({ task: mockTask, user: mockUser })
     ).rejects.toThrow({
       message: "Task already has been perfomed.",
-      details: {
-        message: "Task already has been perfomed.",
-      },
     });
     expect(mockGetById).toBeCalledTimes(1);
   });

@@ -6,7 +6,7 @@ const audience = process.env.JWT_AUD;
 const uuid = require("uuid");
 const jwtid = uuid.v4();
 
-const signToken = ({ data }) => {
+const generateJwt = ({ data }) => {
   const token = jwt.sign({ data }, privateKey, {
     expiresIn,
     issuer,
@@ -16,4 +16,4 @@ const signToken = ({ data }) => {
   return { token };
 };
 
-module.exports = { jwt: { signToken } };
+module.exports = { jwt: { generateJwt } };

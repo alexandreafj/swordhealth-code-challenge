@@ -8,24 +8,17 @@ class LoginService {
     this.redis = redis;
   }
   verifyCredentials = async ({ email, password }) => {
-    // const key = `sword:findOne:${email}`;
-    // const userRawData = await this.redis.get(key);
-    // let userObj = JSON.parse(userRawData) || { password: "" };
-    // console.log(userRawData);
-    // if (!!userRawData) {
-    //   const [user] = await this.userRepository.findOne({
-    //     email,
-    //   });
-    //   console.log(user);
-    //   await this.redis.set({ key, value: user });
-    //   userObj = user;
-    // }
-    // console.log(userObj);
-    const [user = { password: "" }] = await this.userRepository.findOne({
+    const [user] = await this.userRepository.findOne({
       email,
     });
+    const hasFoundUser = !!user;
+    if (hasFoundUser === false) {
+      throw new httpErrors.Unauthorized(
+        "You have entered an invalid username or password"
+      );
+    }
     const { password: hash = "" } = user;
-    const passwordMatch = await this.bcrypt.checkPassword({ hash, password });
+    const passwordMatch = await this.bcrypt.comparePassword({ hash, password });
     if (passwordMatch === false) {
       throw new httpErrors.Unauthorized(
         "You have entered an invalid username or password"
@@ -40,7 +33,7 @@ class LoginService {
       role: user.role,
       name: user.name,
     };
-    const { token } = this.jwt.signToken({ data });
+    const { token } = this.jwt.generateJwt({ data });
     return { token };
   };
 }

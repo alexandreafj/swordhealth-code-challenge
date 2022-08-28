@@ -12,7 +12,7 @@ const httpErrorHandler = ({ req, res, error }) => {
   if (!is_internal) {
     Object.assign(response, {
       message: error.message,
-      details: error.details || error,
+      details: error.details,
     });
   }
   const error_context = {

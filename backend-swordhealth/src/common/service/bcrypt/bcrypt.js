@@ -5,13 +5,13 @@ const generateHashPassword = ({ password }) => {
   return bcrypt.hashSync(password, salt);
 };
 
-const checkPassword = async ({ hash, password }) => {
+const comparePassword = async ({ hash, password }) => {
   return await bcrypt.compare(password, hash);
 };
 
 module.exports = {
   bcrypt: {
     generateHashPassword,
-    checkPassword,
+    comparePassword,
   },
 };
