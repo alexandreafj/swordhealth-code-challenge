@@ -3,7 +3,7 @@ const {
 } = require("../../common");
 const bcryptjs = require("bcryptjs");
 
-describe("Jwt", () => {
+describe("Bcrypt", () => {
   let bcrypt = null;
   beforeEach(() => {
     bcrypt = new Bcrypt();

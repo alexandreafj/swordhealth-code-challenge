@@ -27,7 +27,7 @@ describe("Jwt", () => {
     const mockDecode = jest
       .spyOn(jsonwebtoken, "decode")
       .mockReturnValue({ exp: 1401708019, aud: "", iss: "" });
-    expect(jwt.validateToken({ token: "" })).toThrowError();
+    expect(jwt.validateToken({ token: "" })).rejects.toThrow();
     expect(mockDecode).toBeCalledTimes(1);
     expect(mockVerify).toBeCalledTimes(1);
   });

@@ -1,31 +1,28 @@
 const httpErrors = require("http-errors");
-const { Jwt } = require("../../service");
-
-const authenticationHandler = (
-  req,
-  securityDefinition,
-  _bearer_token,
-  callback
-) => {
-  const jwt = new Jwt();
-
-  const removeBearerRegex = /^Bearer/g;
-
-  const token = (_bearer_token || "").replace(removeBearerRegex, "").trim();
-
-  const hasToken = !!token;
-
-  if (hasToken === false) {
-    throw new httpErrors.Unauthorized("missing token");
+class AuthenticationHandler {
+  constructor(jwt) {
+    this.jwt = jwt;
   }
 
-  jwt.validateToken({ token });
+  authentication = (req, securityDefinition, _bearer_token, callback) => {
+    const removeBearerRegex = /^Bearer/g;
 
-  const tokenPayload = jwt.decode({ token });
+    const token = (_bearer_token || "").replace(removeBearerRegex, "").trim();
 
-  req.auth = tokenPayload;
+    const hasToken = !!token;
 
-  return callback();
-};
+    if (hasToken === false) {
+      throw new httpErrors.Unauthorized("missing token");
+    }
 
-module.exports = { authenticationHandler };
+    this.jwt.validateToken({ token });
+
+    const tokenPayload = this.jwt.decode({ token });
+
+    req.auth = tokenPayload;
+
+    return callback();
+  };
+}
+
+module.exports = { AuthenticationHandler };

@@ -5,15 +5,18 @@ const routes = require("./routes");
 const common = require("./common");
 const helmet = require("helmet");
 const compression = require("compression");
+const { Jwt } = require("./common/service");
 const { handlers } = common.handler.buildRoutesHandler({ routes });
 const port = Number(process.env.PORT || 8089);
 
 const app = express();
+const jwt = new Jwt();
+const authenticationHandler = new common.handler.AuthenticationHandler(jwt);
 const swaggerConfig = {
   appRoot: __dirname,
   swaggerFile: `${__dirname}/config/swagger.yaml`,
   swaggerSecurityHandlers: {
-    Bearer: common.handler.authenticationHandler,
+    Bearer: authenticationHandler.authentication,
   },
 };
 

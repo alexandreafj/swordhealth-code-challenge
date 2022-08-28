@@ -17,7 +17,7 @@ const mockRedisClient = {
   multi: jest.fn().mockImplementation(() => mockMulti),
 };
 
-describe("redis", () => {
+describe("Cache", () => {
   let cache = null;
   beforeEach(() => {
     cache = new Cache();
