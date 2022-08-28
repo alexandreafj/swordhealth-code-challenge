@@ -8,7 +8,7 @@ describe("Jwt", () => {
   beforeEach(() => {
     jwt = new Jwt();
   });
-  it("should generate token", async () => {
+  it("should generate token", () => {
     const mockData = {
       id: 0,
       name: "teste",
@@ -20,5 +20,15 @@ describe("Jwt", () => {
     expect(token).toBeDefined();
     expect(token).toBe("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
     expect(mockSign).toBeCalledTimes(1);
+  });
+
+  it.skip("should throw token expired", () => {
+    const mockVerify = jest.spyOn(jsonwebtoken, "verify").mockReturnValue();
+    const mockDecode = jest
+      .spyOn(jsonwebtoken, "decode")
+      .mockReturnValue({ exp: 1401708019, aud: "", iss: "" });
+    expect(jwt.validateToken({ token: "" })).toThrowError();
+    expect(mockDecode).toBeCalledTimes(1);
+    expect(mockVerify).toBeCalledTimes(1);
   });
 });

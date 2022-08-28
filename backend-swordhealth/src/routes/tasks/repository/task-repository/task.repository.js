@@ -13,9 +13,9 @@ class TaskRepository {
           created_at: task.created_at,
         })
         .into("tasks");
-      this.database.commitTransaction({ transaction });
+      transaction.commit();
     } catch (error) {
-      this.database.rollbackTransaction({ transaction });
+      transaction.rollback();
       throw error;
     }
   };
@@ -32,16 +32,13 @@ class TaskRepository {
       throw error;
     }
   };
-  delete = async ({ taskId, userId }) => {
+  delete = async ({ taskId }) => {
     const { transaction } = await this.database.getTransaction();
     try {
-      await transaction("tasks")
-        .where("id", taskId)
-        .andWhere("user_id", userId)
-        .del();
-      this.database.commitTransaction({ transaction });
+      await transaction.table("tasks").where("id", taskId).del();
+      transaction.commit();
     } catch (error) {
-      this.database.rollbackTransaction({ transaction });
+      transaction.rollback();
       throw error;
     }
   };
@@ -61,13 +58,14 @@ class TaskRepository {
   update = async ({ task, userId, taskId }) => {
     const { transaction } = await this.database.getTransaction();
     try {
-      await transaction("tasks")
+      await transaction
+        .table("tasks")
         .where("id", taskId)
         .andWhere("user_id", userId)
         .update(task);
-      this.database.commitTransaction({ transaction });
+      transaction.commit();
     } catch (error) {
-      this.database.rollbackTransaction({ transaction });
+      transaction.rollback();
       throw error;
     }
   };

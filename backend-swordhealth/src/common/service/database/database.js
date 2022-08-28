@@ -28,10 +28,6 @@ class Database {
 
     return { transaction };
   };
-
-  commitTransaction = ({ transaction }) => transaction.commit();
-
-  rollbackTransaction = ({ transaction }) => transaction.rollback();
 }
 
 module.exports = { Database };

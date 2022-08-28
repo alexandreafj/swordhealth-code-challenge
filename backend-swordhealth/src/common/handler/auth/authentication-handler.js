@@ -19,7 +19,7 @@ const authenticationHandler = (
     throw new httpErrors.Unauthorized("missing token");
   }
 
-  jwt.tokenExpired({ token });
+  jwt.validateToken({ token });
 
   const tokenPayload = jwt.decode({ token });
 

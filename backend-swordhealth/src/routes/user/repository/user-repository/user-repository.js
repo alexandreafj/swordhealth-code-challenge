@@ -8,8 +8,7 @@ class UserRepository {
       return await connection
         .select("id", "email", "password", "name", "role")
         .from("users")
-        .where("email", email)
-        .limit(1);
+        .where("email", email);
     } catch (error) {
       throw error;
     }
@@ -36,20 +35,9 @@ class UserRepository {
           role: user.role,
         })
         .into("users");
-      this.database.commitTransaction({ transaction });
+      transaction.commit();
     } catch (error) {
-      this.database.rollbackTransaction({ transaction });
-      throw error;
-    }
-  };
-  getManagers = async () => {
-    const { connection } = await this.database.getConnection();
-    try {
-      return await connection
-        .select("id", "email", "password", "name", "role")
-        .from("users")
-        .where("role", "manager");
-    } catch (error) {
+      transaction.rollback();
       throw error;
     }
   };

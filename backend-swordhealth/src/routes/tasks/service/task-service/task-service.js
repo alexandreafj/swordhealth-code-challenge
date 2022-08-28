@@ -50,13 +50,7 @@ class TaskService {
     return tasks;
   };
   deleteTask = async ({ taskId, user }) => {
-    const { id: userId } = user;
-    const task = await this.taskRepository.getById({ taskId, userId });
-    const isTaskIdLinkedWithUser = !!task;
-    if (isTaskIdLinkedWithUser === false) {
-      throw new httpErrors.Unauthorized("Task does not belongs to the user.");
-    }
-    await this.taskRepository.delete({ taskId, userId });
+    await this.taskRepository.delete({ taskId });
     const key = `sword:${user.id}:get`;
     await this.cache.del({ key });
   };
