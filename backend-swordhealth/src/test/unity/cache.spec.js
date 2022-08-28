@@ -3,18 +3,18 @@ const {
 } = require("../../common");
 const redis = require("redis");
 
+const mockMulti = {
+  del: jest.fn(),
+  exec: jest.fn(),
+};
+
 const mockRedisClient = {
   connect: jest.fn(),
   disconnect: jest.fn(),
   set: jest.fn().mockImplementation(() => "OK"),
   get: jest.fn().mockImplementation(() => JSON.stringify({ id: 0 })),
   keys: jest.fn().mockImplementation(() => ["key1", "key2", "key3"]),
-  multi: () => {
-    return {
-      del: jest.fn(),
-      exec: jest.fn().mockImplementation(() => Promise.resolve()),
-    };
-  },
+  multi: jest.fn().mockImplementation(() => mockMulti),
 };
 
 describe("redis", () => {
@@ -73,6 +73,9 @@ describe("redis", () => {
     expect(mockGetClient).toBeCalledTimes(1);
     expect(mockRedisClient.connect).toBeCalledTimes(1);
     expect(mockRedisClient.keys).toBeCalledTimes(1);
+    expect(mockRedisClient.multi).toBeCalledTimes(1);
+    expect(mockMulti.del).toBeCalledTimes(3);
+    expect(mockMulti.exec).toBeCalledTimes(1);
     expect(mockRedisClient.disconnect).toBeCalledTimes(1);
   });
 });

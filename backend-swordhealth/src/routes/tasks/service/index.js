@@ -3,8 +3,9 @@ const { UserRepository } = require("../../user/repository");
 const { TaskService } = require("./task-service/task-service");
 const { service } = require("../../../common");
 
-const { Database, rabbitmq, Cache } = service;
+const { Database, Rabbitmq, Cache } = service;
 
+const rabbitmq = new Rabbitmq();
 const database = new Database();
 const cache = new Cache();
 const taskRepository = new TaskRepository({ database });
