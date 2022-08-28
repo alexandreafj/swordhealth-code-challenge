@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swordhealth
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: swordhealth
+      labels:
+        app: swordhealth
+    spec:
+      containers:
+        - name: swordhealth-proxy
+          image: swordhealth-proxy:latest
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 20
+            successThreshold: 3
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            failureThreshold: 3
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "64m"
+            limits:
+              memory: "256Mi"
+        - name: swordhealth
+          image: swordhealth:latest
+          env:
+            - name: PORT
+              value: "8089"
+            - name: REDIS_HOST
+              value: "redis-svc"
+            - name: MYSQL_HOST
+              value: "10.25.200.1"
+            - name: MYSQL_USER
+              value: "sword"
+            - name: MYSQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: sword-default-secrets
+                  key: sword-db-password
+            - name: MYSQL_DATABASE
+              value: "maintenance_tasks"
+            - name: NODE_ENV
+              value: "production"
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sword-default-secrets
+                  key: sword-jwt-private-key
+            - name: JWT_EXPIRES_IN
+              value: "1 day"
+            - name: JWT_ISS
+              value: "swordhealth"
+            - name: JWT_AUD
+              value: swordhost.com
+            - name: AMQP_QUEUE
+              value: manager.taks_perfomed
+            - name: AMQP_URL
+              value: "rabbitmq-cluster"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/docs/?nocache=true
+              port: 8089
+            failureThreshold: 3
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "512m"
+            limits:
+              memory: "256Mi"
+      terminationGracePeriodSeconds: 5
+  selector:
+    matchLabels:
+      app: swordhealth
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: swordhealth-svc
+spec:
+  type: NodePort
+  selector:
+    app: swordhealth
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: swordhealth
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: swordhealth
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80

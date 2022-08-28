@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-consumer
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: notification-consumer
+      labels:
+        app: notification-consumer
+    spec:
+      containers:
+        - name: notification-consumer
+          image: notification-consumer:latest
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: AMQP_QUEUE
+              value: "manager.taks_perfomed"
+            - name: AMQP_URL
+              value: "rabbitmq-cluster"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/docs/?nocache=true
+              port: 8089
+            failureThreshold: 3
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "512m"
+            limits:
+              memory: "256Mi"
+      terminationGracePeriodSeconds: 5
+  selector:
+    matchLabels:
+      app: notification-consumer
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: notification-consumer
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: notification-consumer
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
