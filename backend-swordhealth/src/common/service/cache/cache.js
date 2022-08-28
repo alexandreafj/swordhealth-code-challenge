@@ -79,8 +79,6 @@ class Cache {
           });
         });
       }
-
-      await redisClient.disconnect();
     } catch (error) {
       console.error(error);
     }

@@ -2,8 +2,9 @@ const { UserRepository } = require("../repository");
 const { UserService } = require("./user-service/user-service");
 const { service } = require("../../../common");
 
-const { Database, bcrypt } = service;
+const { Database, Bcrypt } = service;
 
+const bcrypt = new Bcrypt();
 const database = new Database();
 const userRepository = new UserRepository({ database });
 

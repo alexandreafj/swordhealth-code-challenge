@@ -1,11 +1,10 @@
 const httpErrors = require("http-errors");
 
 class LoginService {
-  constructor({ userRepository, bcrypt, jwt, redis }) {
+  constructor({ userRepository, bcrypt, jwt }) {
     this.userRepository = userRepository;
     this.bcrypt = bcrypt;
     this.jwt = jwt;
-    this.redis = redis;
   }
   verifyCredentials = async ({ email, password }) => {
     const [user] = await this.userRepository.findOne({

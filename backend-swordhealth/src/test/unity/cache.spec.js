@@ -76,6 +76,5 @@ describe("redis", () => {
     expect(mockRedisClient.multi).toBeCalledTimes(1);
     expect(mockMulti.del).toBeCalledTimes(3);
     expect(mockMulti.exec).toBeCalledTimes(1);
-    expect(mockRedisClient.disconnect).toBeCalledTimes(1);
   });
 });
