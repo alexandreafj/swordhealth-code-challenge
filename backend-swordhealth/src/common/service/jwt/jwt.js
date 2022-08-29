@@ -20,29 +20,31 @@ class Jwt {
     return { token };
   };
   validateToken = ({ token }) => {
-    jwt.verify(token, this.privateKey);
+    try {
+      const tokenPayload = jwt.verify(token, this.privateKey);
 
-    const tokenPayload = jwt.decode(token, {});
+      const { exp = 0, aud, iss } = tokenPayload;
 
-    const { exp = 0, aud, iss } = tokenPayload;
+      const unixFormat = 1000;
 
-    const unixFormat = 1000;
+      const tokenDate = new Date(exp * unixFormat).getTime();
 
-    const tokenDate = new Date(exp * unixFormat).getTime();
+      const today = new Date().getTime();
 
-    const today = new Date().getTime();
+      const hasTokenExpired = tokenDate < today;
 
-    const hasTokenExpired = tokenDate < today;
+      if (hasTokenExpired) throw new httpErrors.Unauthorized("token expired");
 
-    if (hasTokenExpired) throw new httpErrors.Unauthorized("token expired");
+      const audIsValid = aud === process.env.JWT_AUD;
 
-    const audIsValid = aud === process.env.JWT_AUD;
+      if (!audIsValid) throw new httpErrors.Unauthorized("invalid token");
 
-    if (!audIsValid) throw new httpErrors.Unauthorized("token invalid");
+      const issIsValid = iss === process.env.JWT_ISS;
 
-    const issIsValid = iss === process.env.JWT_ISS;
-
-    if (!issIsValid) throw new httpErrors.Unauthorized("token invalid");
+      if (!issIsValid) throw new httpErrors.Unauthorized("invalid token");
+    } catch (error) {
+      throw new httpErrors.Unauthorized(error.message);
+    }
   };
   decode = ({ token }) => {
     return jwt.decode(token, {});

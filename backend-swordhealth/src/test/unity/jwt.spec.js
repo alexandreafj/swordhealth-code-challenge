@@ -24,12 +24,10 @@ describe("Jwt", () => {
   });
 
   it("should validate token", () => {
-    const mockVerify = jest.spyOn(jsonwebtoken, "verify").mockReturnValue();
-    const mockDecode = jest
-      .spyOn(jsonwebtoken, "decode")
+    const mockVerify = jest
+      .spyOn(jsonwebtoken, "verify")
       .mockReturnValue({ exp: 2401708019, aud: "sword", iss: "sword" });
     jwt.validateToken({ token: "" });
-    expect(mockDecode).toBeCalledTimes(1);
     expect(mockVerify).toBeCalledTimes(1);
   });
 });
