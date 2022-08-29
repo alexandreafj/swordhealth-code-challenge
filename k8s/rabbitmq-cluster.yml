@@ -48,4 +48,4 @@ spec:
     configure: ".*"
     read: ".*"
   rabbitmqClusterReference:
-    name: rabbitmq
+    name: rabbitmq-cluster
