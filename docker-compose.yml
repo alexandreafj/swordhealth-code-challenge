@@ -84,6 +84,7 @@ services:
       context: ./notification-consumer
       dockerfile: Dockerfile.dev
     volumes:
+      - notification-consumer-node-modules:/notification-consumer/node_modules
       - ./notification-consumer:/notification-consumer
     depends_on:
       - "rabbitmq"
@@ -99,4 +100,4 @@ networks:
     driver: bridge
 volumes:
   backend-swordhealth-node-modules:
-  notification-manager-node-modules:
+  notification-consumer-node-modules:
