@@ -11,6 +11,7 @@ After docker finishes initialize the services you can reach this link [Swagger](
 ## Running local unit tests
 Reach by terminal the backend-swordhealth folder and execute:
 ```
+npm i
 npm run test:unit
 ```
 ## How to test it
