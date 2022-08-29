@@ -294,8 +294,6 @@ paths:
       responses:
         204:
           description: task has been updated
-          schema:
-            $ref: "#/definitions/DefaultResponse"
         400:
           description: BadRequest
           schema:
@@ -325,8 +323,6 @@ paths:
       responses:
         204:
           description: task has been deleted
-          schema:
-            $ref: "#/definitions/DefaultResponse"
         500:
           description: internalError - UUID to search for logs
           schema:
