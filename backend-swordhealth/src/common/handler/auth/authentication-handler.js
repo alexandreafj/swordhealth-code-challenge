@@ -1,12 +1,11 @@
 const httpErrors = require("http-errors");
+const removeBearerRegex = /^Bearer/g;
 class AuthenticationHandler {
   constructor(jwt) {
     this.jwt = jwt;
   }
 
   authentication = (req, securityDefinition, _bearer_token, callback) => {
-    const removeBearerRegex = /^Bearer/g;
-
     const token = (_bearer_token || "").replace(removeBearerRegex, "").trim();
 
     const hasToken = !!token;
