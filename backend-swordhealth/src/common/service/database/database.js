@@ -30,15 +30,3 @@ class Database {
 }
 
 module.exports = { Database };
-// typescript
-// javascript
-// go
-// php
-
-// pub/sub
-// storage
-// sendbird
-// mysql 5.7
-
-// mock / jest
-// agile kabam/scrum
