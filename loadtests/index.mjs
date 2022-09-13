@@ -70,8 +70,8 @@ const runLoadTests = async () => {
 
     const instaceAutocannon = autocannon({
       url: `${URL}/tasks`,
-      connections: 1000,
-      pipelining: 100,
+      connections: 10,
+      pipelining: 1,
       duration: 10,
       headers: {
         authorization: `Bearer ${token}`,
