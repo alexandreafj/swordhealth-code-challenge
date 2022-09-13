@@ -10,14 +10,17 @@ class Cache {
 
   set = async ({ key, value, expireFormat = "h", expire = 1 }) => {
     try {
+      const expireInMinutes = 60;
       const expireInHours = 60 * 60;
-
+      const exoureInDays = expireInHours * 24;
       const typeExpiration = {
+        m: expireInMinutes * expire,
         h: expireInHours * expire,
-        d: expireInHours * 24 * expire,
+        d: exoureInDays * expire,
       };
 
-      const expireIn = typeExpiration[expireFormat] || expireInHours * expire;
+      const expireIn = typeExpiration[expireFormat] || expireInMinutes * expire;
+      //const expireIn = 100;
 
       const redisClient = this.getClient();
 
