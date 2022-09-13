@@ -55,6 +55,8 @@ services:
       MYSQL_USER: sword
       MYSQL_PASS: sword
       MYSQL_DATABASE: maintenance_tasks
+      MYSQL_POOL_MIN: 2
+      MYSQL_POOL_MAX: 8
       NODE_ENV: development
       JWT_PRIVATE_KEY: backend-challenge-sword
       JWT_EXPIRES_IN: 1 day

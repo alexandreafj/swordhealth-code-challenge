@@ -1,7 +1,6 @@
 class Database {
-  constructor() {}
-  getConnection = async () => {
-    const connection = require("knex")({
+  constructor() {
+    this.connection = require("knex")({
       client: "mysql2",
       connection: {
         host: process.env.MYSQL_HOST,
@@ -9,25 +8,37 @@ class Database {
         password: process.env.MYSQL_PASS,
         database: process.env.MYSQL_DATABASE,
       },
+      pool: {
+        min: Number(process.env.MYSQL_POOL_MIN),
+        max: Number(process.env.MYSQL_POOL_MAX),
+      },
+      acquireConnectionTimeout: 10000,
     });
-    return { connection };
+  }
+  getConnection = async () => {
+    return { connection: this.connection };
   };
 
   getTransaction = async () => {
-    const knex = require("knex")({
-      client: "mysql2",
-      connection: {
-        host: process.env.MYSQL_HOST,
-        user: "root",
-        password: "root",
-        database: process.env.MYSQL_DATABASE,
-      },
-    });
-
-    const transaction = await knex.transaction();
-
+    const transaction = await this.connection.transaction();
     return { transaction };
+  };
+
+  closeConnection = () => {
+    this.connection.destroy();
   };
 }
 
 module.exports = { Database };
+// typescript
+// javascript
+// go
+// php
+
+// pub/sub
+// storage
+// sendbird
+// mysql 5.7
+
+// mock / jest
+// agile kabam/scrum

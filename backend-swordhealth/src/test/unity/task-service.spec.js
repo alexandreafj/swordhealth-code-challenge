@@ -223,7 +223,7 @@ describe.only("task-service", () => {
     expect(mockSendNotification).toBeCalledTimes(1);
   });
 
-  it("should throw error if task don;t belong to user", async () => {
+  it("should throw error if task don't belong to user", async () => {
     const mockGetById = jest
       .spyOn(taskService.taskRepository, "getById")
       .mockImplementation(() => Promise.resolve(null));

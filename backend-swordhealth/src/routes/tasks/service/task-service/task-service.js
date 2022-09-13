@@ -70,12 +70,14 @@ class TaskService {
     if (hasPerfomedTaskAlready) {
       throw new httpErrors.BadRequest("Task already has been perfomed.");
     }
-
     await this.taskRepository.update({ taskId, task: taskToUpdate, userId });
     const key = `sword:${user.id}:get`;
     await this.cache.del({ key });
-    const message = `The tech ${user.name} performed the task ${task.name} on date ${task.perfomed_task_date}`;
-    this.rabbitmq.sendNotification({ message });
+    const shouldNotify = taskToUpdate.perfomed_task_date !== null;
+    if (shouldNotify) {
+      const message = `The tech ${user.name} performed the task ${task.name} on date ${task.perfomed_task_date}`;
+      await this.rabbitmq.sendNotification({ message });
+    }
   };
 }
 module.exports = { TaskService };

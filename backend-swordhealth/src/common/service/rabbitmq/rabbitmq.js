@@ -1,4 +1,5 @@
 const amqplib = require("amqplib");
+
 class Rabbitmq {
   constructor() {
     this.amqpUrl = process.env.AMQP_URL || "amqp://localhost:5673";

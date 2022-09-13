@@ -63,6 +63,16 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Task"
+  Login:
+    type: "object"
+    required:
+      - "email"
+      - "password"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
   CreateTask:
     type: "object"
     required:
@@ -179,7 +189,7 @@ paths:
           schema:
             $ref: "#/definitions/DefaultResponse"
   /login:
-    get:
+    post:
       tags:
         - 'authentication'
       x-swagger-router-controller: app
@@ -190,16 +200,12 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "email"
-        in: "query"
-        description: "The user email"
+      - in: "body"
+        name: "body"
+        description: "login object"
         required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The user password "
-        required: true
-        type: "string"
+        schema:
+          $ref: "#/definitions/Login"
       responses:
         200:
           description: "successful logged in"

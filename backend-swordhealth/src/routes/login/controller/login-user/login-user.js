@@ -6,7 +6,7 @@ const { loginService } = require("../../service");
 
 const loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.query;
+    const { email, password } = req.body;
     const { user } = await loginService.verifyCredentials({ email, password });
     const { token } = loginService.generateToken({ user });
     return res.status(StatusCodes.OK).send({ token });
